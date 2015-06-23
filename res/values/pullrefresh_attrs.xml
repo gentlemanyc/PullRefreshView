@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+    <declare-styleable name="pullrefresh">
+        <attr name="header_img" format="reference"></attr>
+        <attr name="header_textSize" format="dimension"></attr>
+        <attr name="header_TextColor" format="reference|color"></attr>
+    </declare-styleable>
+    -->
+    <declare-styleable name="PullRefresh">
+        <attr name="header_img" format="reference" />
+        <attr name="header_textSize" format="dimension" />
+        <attr name="header_textColor" format="reference|color" />
+    </declare-styleable>
+
+</resources>
