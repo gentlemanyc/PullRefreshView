@@ -1,21 +1,15 @@
 package cc.core.pullrefresh;
 
-import cc.core.pullrefresh.extra.FooterLayout;
-import cc.core.pullrefresh.extra.HeaderLayout;
-
-import com.nineoldandroids.view.ViewHelper;
-
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AbsListView;
@@ -24,30 +18,34 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.TextView;
+import cc.core.pullrefresh.extra.FooterLayout;
+import cc.core.pullrefresh.extra.HeaderLayout;
+
+import com.nineoldandroids.view.ViewHelper;
 
 /**
  * ClassName:PullRefreshBase <br/>
- * Date: 2015Äê6ÔÂ22ÈÕ ÏÂÎç3:04:43 <br/>
+ * Date: 2015å¹´6æœˆ22æ—¥ ä¸‹åˆ3:04:43 <br/>
+ * PullRefreshListView</a>
  * 
  * @author YuanChao
  */
 public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
-		LinearLayout implements IPullBase<T>, OnScrollListener {
+		PullRefreshBase<T> implements IPullBase<T>, OnScrollListener {
 
 	/**
-	 * ÄÚ²¿µÄListView
+	 * å†…éƒ¨çš„ListView
 	 */
 	protected T listview;
 
 	/**
-	 * ÏÂÀ­Ë¢ĞÂµÄHeaderºÍÉÏÀ­¼ÓÔØ¸ü¶àµÄView
+	 * ä¸‹æ‹‰åˆ·æ–°çš„Headerå’Œä¸Šæ‹‰åŠ è½½æ›´å¤šçš„View
 	 */
 	protected FooterLayout footerView;
 	protected HeaderLayout headerView;
 
 	/**
-	 * ·â×°ListViewµÄÈİÆ÷
+	 * å°è£…ListViewçš„å®¹å™¨
 	 */
 	protected LinearLayout layoutBase;
 
@@ -59,7 +57,7 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	protected int newScrollValue;
 	protected int lastVisiablePosition;
 	protected int totalCount;
-	private int scrollState;// µ±Ç°»¬¶¯µÄ×´Ì¬
+	private int scrollState;// å½“å‰æ»‘åŠ¨çš„çŠ¶æ€
 	protected int state, mode;
 
 	protected float mLastMotionY;
@@ -70,10 +68,10 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 
 	protected boolean once;
 	protected boolean headerScrolling;
-	protected boolean isFirst = true;
+	protected boolean isShoundMeausreInitY = true;// æ˜¯å¦åº”è¯¥è®¡ç®—initY
 	protected boolean isPulling;
-	protected boolean refreshAnimStarted = false;// À­ÊÖË¢ĞÂÊ±£¬»á¼ÓÔØ¶¯»­»¬¶¯µ½HeaderµÄ¸ß¶È
-	// µ±Êı¾İÎŞ·¨Ìî³äÆÁÄ»Ê±ÎŞĞè¼ÓÔØ¸ü¶à
+	protected boolean refreshAnimStarted = false;// æ‹‰æ‰‹åˆ·æ–°æ—¶ï¼Œä¼šåŠ è½½åŠ¨ç”»æ»‘åŠ¨åˆ°Headerçš„é«˜åº¦
+	// å½“æ•°æ®æ— æ³•å¡«å……å±å¹•æ—¶æ— éœ€åŠ è½½æ›´å¤š
 	private boolean canLoadMore = true;
 
 	private AttributeSet attr;
@@ -113,10 +111,10 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	}
 
 	/**
-	 * <h1>View µÄ³õÊ¼»¯</h1>
+	 * <h1>View çš„åˆå§‹åŒ–</h1>
 	 * <p>
-	 * ÊµÀı»¯Ò»¸öLineLayout¶ÔÏó{@link #layoutBase}£¬°Ñ{@link #headerView}ºÍ
-	 * {@link #listview} Ìí¼Óµ½{@code #layoutBase}
+	 * å®ä¾‹åŒ–ä¸€ä¸ªLineLayoutå¯¹è±¡{@link #layoutBase}ï¼ŒæŠŠ{@link #headerView}å’Œ
+	 * {@link #listview} æ·»åŠ åˆ°{@code #layoutBase}
 	 * </p>
 	 * 
 	 * @param context
@@ -134,23 +132,30 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 		LayoutParams lp = (LayoutParams) layoutBase.getLayoutParams();
 		lp.setMargins(0, -headerHeight, 0, 0);
 		layoutBase.setLayoutParams(lp);
-		getViewTreeObserver().addOnGlobalLayoutListener(
-				new ViewTreeObserver.OnGlobalLayoutListener() {
+	}
 
-					public void onGlobalLayout() {
-						if (once) {
-							once = false;
-						} else
-							return;
-						int[] lc = new int[2];
-						headerView.getLocationInWindow(lc);
-					}
-				});
+	@Override
+	public boolean onTouchEvent(MotionEvent ev) {
+		if (isListViewCanPull()) {//å½“ListViewæ— æ•°æ®æ˜¾ç¤ºäº†EmptyViewæ—¶ï¼Œè®¾ç½®å¯ä»¥ä¸‹æ‹‰
+			childTouchEvnet(ev);
+			return true;
+		}
+		return super.onTouchEvent(ev);
+	}
+
+	private boolean isListViewCanPull() {
+		if (listview.getEmptyView() != null && listview.getCount() == 1) {
+			if (listview.getEmptyView().getVisibility() == View.VISIBLE) {
+				return true;
+			} else
+				return false;
+		} else
+			return false;
 	}
 
 	/**
 	 * <p>
-	 * ³õÊ¼»¯{@link #listview}·Ö±ğµ÷ÓÃËüµÄ²»Í¬²ÎÊıµÄ¹¹Ôì·½·¨£¬ÒÔÊ¹xmlÀï¿ÉÒÔÊ¹ÓÃ{@link #listview} µÄÊôĞÔ
+	 * åˆå§‹åŒ–{@link #listview}åˆ†åˆ«è°ƒç”¨å®ƒçš„ä¸åŒå‚æ•°çš„æ„é€ æ–¹æ³•ï¼Œä»¥ä½¿xmlé‡Œå¯ä»¥ä½¿ç”¨{@link #listview} çš„å±æ€§
 	 * </p>
 	 * 
 	 * @param context
@@ -170,14 +175,14 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	@Override
 	public void onScrollStateChanged(AbsListView absListView, int i) {
 		this.scrollState = i;
-		// ÅĞ¶ÏÊÇ·ñ»¬¶¯ÁË×îµ×²¿
+		// åˆ¤æ–­æ˜¯å¦æ»‘åŠ¨äº†æœ€åº•éƒ¨
 		if (totalCount == lastVisiablePosition
 				&& scrollState == SCROLL_STATE_IDLE && canLoadMore) {
-			// ËµÃ÷¹ö¶¯µ½ÁË×îÏÂÃæÒ»¸öItem
+			// è¯´æ˜æ»šåŠ¨åˆ°äº†æœ€ä¸‹é¢ä¸€ä¸ªItem
 			if (refreshListener != null) {
 				if (mode == Mode.DISABLE || mode == Mode.PULL_FROM_TOP)
 					return;
-				if (state != State.FOOTER_REFRESHING) {// ÒÑ¾­´¦ÓÚ¼ÓÔØ¸ü¶à×´Ì¬²»ĞèÒªÔÙ»Øµ÷
+				if (state != State.FOOTER_REFRESHING) {// å·²ç»å¤„äºåŠ è½½æ›´å¤šçŠ¶æ€ä¸éœ€è¦å†å›è°ƒ
 					state = State.FOOTER_REFRESHING;
 					footerView.setVisibility(View.VISIBLE);
 					refreshListener.onFooterRefresh();
@@ -192,7 +197,7 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 			int visibleItemCount, int totalItemCount) {
 		this.firstVisibleItem = firstVisibleItem;
 
-		// µ±Êı¾İ²»ÄÜÌî³äÕû¸öÆÁÄ»Ê±£¬½«Òş²ØFooterView
+		// å½“æ•°æ®ä¸èƒ½å¡«å……æ•´ä¸ªå±å¹•æ—¶ï¼Œå°†éšè—FooterView
 		if (totalItemCount <= visibleItemCount) {
 			this.canLoadMore = false;
 			if (footerView != null)
@@ -205,12 +210,6 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 		totalCount = totalItemCount;
 	}
 
-	private int[] getLc(View view) {
-		int[] lc = new int[2];
-		view.getLocationInWindow(lc);
-		return lc;
-	}
-
 	protected void innerInit(Context context) {
 		listview.getViewTreeObserver().addOnGlobalLayoutListener(
 				new OnGlobalLayoutListener() {
@@ -218,22 +217,22 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 					@Override
 					public void onGlobalLayout() {
 
-						if (!isFirst)
+						if (!isShoundMeausreInitY)
 							return;
-						isFirst = !isFirst;
 						if (listview.getCount() > 0) {
-							mInitY = getLc(getChildAt(0))[1];
+							mInitY = getLc(layoutBase.getChildAt(1))[1];
+							isShoundMeausreInitY = !isShoundMeausreInitY;
 						}
 					}
 				});
-		// ²»ÏÔÊ¾¶¥²¿ºÍµ×²¿ÍÏ×§Ê±µÄÒõÓ°
+		// ä¸æ˜¾ç¤ºé¡¶éƒ¨å’Œåº•éƒ¨æ‹–æ‹½æ—¶çš„é˜´å½±
 		// if (Integer.parseInt(Build.VERSION.SDK) >= 9) {
 		// this.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		// }
 	}
 
 	/**
-	 * ÉèÖÃ{@link #headerView}
+	 * è®¾ç½®{@link #headerView}
 	 */
 	@Override
 	public void initHeader(Context context, AttributeSet attr) {
@@ -242,7 +241,7 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	}
 
 	/**
-	 * ÉèÖÃ{@link #footerView}
+	 * è®¾ç½®{@link #footerView}
 	 */
 	@Override
 	public void initFooter(Context context, AttributeSet attr) {
@@ -250,7 +249,7 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	}
 
 	/**
-	 * µ÷ÓÃ´Ë·½·¨Ç°ÄãÓ¦¸ÃÏÈ³õÊ¼»¯{@link #footerView}
+	 * è°ƒç”¨æ­¤æ–¹æ³•å‰ä½ åº”è¯¥å…ˆåˆå§‹åŒ–{@link #footerView}
 	 * 
 	 * @param listener
 	 */
@@ -259,7 +258,7 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	}
 
 	/**
-	 * ·µ»Ø footerView
+	 * è¿”å› footerView
 	 * 
 	 * @return
 	 */
@@ -268,7 +267,7 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	}
 
 	/**
-	 * ·µ»Ø headerView
+	 * è¿”å› headerView
 	 * 
 	 * @return
 	 */
@@ -278,7 +277,7 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 
 	/**
 	 * <p>
-	 * ÉèÖÃÏÂÀ­Ë¢ĞÂµÄÄ£Ê½£¬ÄãÓ¦¸ÃÔÚ{@link #setAdapter(ListAdapter)}Ö®Ç°µ÷ÓÃÕâ¸ö·½·¨
+	 * è®¾ç½®ä¸‹æ‹‰åˆ·æ–°çš„æ¨¡å¼ï¼Œä½ åº”è¯¥åœ¨{@link #setAdapter(ListAdapter)}ä¹‹å‰è°ƒç”¨è¿™ä¸ªæ–¹æ³•
 	 * </p>
 	 * 
 	 * @param mode
@@ -287,8 +286,8 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 		this.mode = mode;
 		switch (mode) {
 		case Mode.BOTH:
-			footerView.setVisibility(View.VISIBLE);
 			initFooter(getContext(), attr);
+			footerView.setVisibility(View.VISIBLE);
 			break;
 		case Mode.PULL_FROM_BOTTOM:
 			initFooter(getContext(), attr);
@@ -298,7 +297,7 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	}
 
 	/**
-	 * ¼ÆËã¾àÀë£¬TouchÊÂ¼ş´¦Àí
+	 * è®¡ç®—è·ç¦»ï¼ŒTouchäº‹ä»¶å¤„ç†
 	 * 
 	 * @param ev
 	 * @return
@@ -325,7 +324,7 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 				else {
 					if (state == State.HEAD_RELEASEING) {
 						if (state != State.FOOTER_REFRESHING
-								&& state != State.HEAD_REFRESHING) {// ÒÑ¾­´¦ÓÚË¢ĞÂµÄ×´Ì¬²»ĞèÒª»Øµ÷
+								&& state != State.HEAD_REFRESHING) {// å·²ç»å¤„äºåˆ·æ–°çš„çŠ¶æ€ä¸éœ€è¦å›è°ƒ
 							state = State.HEAD_REFRESHING;
 							refreshAnimStarted = true;
 							startHeadAnim(headerHeight);
@@ -369,9 +368,9 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	}
 
 	/**
-	 * <h1>ÏÂÀ­µÄ¾ßÌåÊµÏÖ¡£</h1>
+	 * <h1>ä¸‹æ‹‰çš„å…·ä½“å®ç°ã€‚</h1>
 	 * <p>
-	 * Í¨¹ı¼ÆËã¼ÆËãÊÖÖ¸»¬¶¯µÄ¾àÀë£¬²»¶ÏµØ¸Ä±ä{@link #layoutBase}µÄYÒÔ´ïµ½ÏÂÒÆĞ§¹û
+	 * é€šè¿‡è®¡ç®—è®¡ç®—æ‰‹æŒ‡æ»‘åŠ¨çš„è·ç¦»ï¼Œä¸æ–­åœ°æ”¹å˜{@link #layoutBase}çš„Yä»¥è¾¾åˆ°ä¸‹ç§»æ•ˆæœ
 	 * </p>
 	 */
 	@Override
@@ -396,13 +395,13 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	}
 
 	/**
-	 * ¸üĞÂ{@link #headerView}£¬²¢ÉèÖÃÈ«¾ÖµÄ×´Ì¬
+	 * æ›´æ–°{@link #headerView}ï¼Œå¹¶è®¾ç½®å…¨å±€çš„çŠ¶æ€
 	 */
 	private void updateHead() {
 		setPressed(false);
 		if (refreshAnimStarted)
 			return;
-		mHeaderY = getLc(getChildAt(0))[1];
+		mHeaderY = getLc(listview.getChildAt(0))[1];
 		// if (state == State.FOOTER_REFRESHING)
 		// return;
 		if ((mHeaderY - mInitY) >= headerHeight) {
@@ -415,16 +414,15 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	}
 
 	/**
-	 * ¼ÆËãÎ»ÖÃ£¬ÅĞ¶ÏÊÇ·ñ´ïµ½¶¥²¿
+	 * è®¡ç®—ä½ç½®ï¼Œåˆ¤æ–­æ˜¯å¦è¾¾åˆ°é¡¶éƒ¨
 	 */
 	@Override
 	public boolean readyPull(MotionEvent ev) {
 		if (isPulling)
 			return true;
-		int[] lc = new int[2];
-		getChildAt(0).getLocationInWindow(lc);
+		int[] lc = getLc(listview.getChildAt(0));
 		if (-newScrollValue > 0 && firstVisibleItem == 0 && mInitY == lc[1]) {
-			Log.i("CC", "newScrollValue:" + newScrollValue + " lc[1]:" + lc[1]
+			Log.i("CC", "newScrollValue:" + newScrollValue +" listview.getFirstVisiblePosition();"+ listview.getFirstVisiblePosition()+ ", lc[1]:" + lc[1]
 					+ ",mInitY:" + mInitY);
 			mInitialMotionY = ev.getY();
 			newScrollValue = 1;
@@ -437,10 +435,10 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	}
 
 	/**
-	 * Ë¢ĞÂ½áÊøºó»Øµ¯¶¯»­
+	 * åˆ·æ–°ç»“æŸåå›å¼¹åŠ¨ç”»
 	 * 
 	 * @param value
-	 *            ×î¶à¿ÉÒÔÉèÖÃÁ½¸öÖµ
+	 *            æœ€å¤šå¯ä»¥è®¾ç½®ä¸¤ä¸ªå€¼
 	 */
 	public void startHeadAnim(float... value) {
 		float startValue, endValue;
@@ -458,7 +456,7 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 		Log.d("CC", "mInitY:" + mInitY + ",Y:" + ",headerHeight:"
 				+ headerHeight);
 		anim.addListener(new Animator.AnimatorListener() {
-			boolean isRefreshAnim = false;
+			boolean isRefreshAnim = false;// æ˜¯å¦éœ€è¦æ‰§è¡Œä¸‹æ‹‰åˆ·æ–°æ—¶åŠ è½½çš„åŠ¨ç”»
 
 			public void onAnimationStart(Animator animator) {
 				if (refreshAnimStarted)
@@ -475,10 +473,12 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 					state = State.HEAD_REFRESHING;
 					updateState();
 				} else {
-					headerScrolling = false;
 					state = State.NORMAL;
 				}
+				headerScrolling = false;
 				updateState();
+				isShoundMeausreInitY = true;
+				innerInit(getContext());
 			}
 
 			public void onAnimationCancel(Animator animator) {
@@ -501,32 +501,49 @@ public abstract class PullRefreshAbsListViewBase<T extends AbsListView> extends
 	}
 
 	@Override
+	public void showHeaderRefresh() {
+		refreshAnimStarted = true;
+		startHeadAnim(headerHeight);
+	}
+
+	@Override
 	public T getRefreshView() {
 		return listview;
 	}
 
 	/**
-	 * ÉèÖÃÎŞÊı¾İÊ±{@link #listview}µÄEmptyViewt</br>
+	 * è®¾ç½®æ— æ•°æ®æ—¶{@link #listview}çš„EmptyViewt</br>
 	 * 
 	 * @param view
-	 *            ËüÓ¦¸ÃÊÇÒ»¸öFrameLayout</br>
+	 *            å®ƒåº”è¯¥æ˜¯ä¸€ä¸ªFrameLayout</br>
 	 */
 	@Override
-	public void setEmptyView(View view) {
+	public void setEmptyView(View emptyView) {
+		FrameLayout emptyLayout;
 		if (listview.getEmptyView() == null) {
-			listview.setEmptyView(view);
-		} else if (view instanceof FrameLayout) {
-			((FrameLayout) view).removeAllViews();
-			((FrameLayout) view).addView(view);
+			emptyLayout = new FrameLayout(getContext());
+			emptyLayout.setLayoutParams(new LayoutParams(
+					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+			emptyView.setLayoutParams(new LayoutParams(
+					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+			emptyLayout.addView(emptyView);
+			emptyView.setVisibility(View.VISIBLE);
+			((ViewGroup) listview.getParent()).addView(emptyLayout);
+			listview.setEmptyView(emptyLayout);
+		} else {
+			emptyLayout = (FrameLayout) listview.getEmptyView();
+			emptyLayout.removeAllViews();
+			emptyLayout.addView(emptyView);
 		}
 	}
 
 	/**
-	 * ÉèÖÃAdapter
+	 * è®¾ç½®Adapter
 	 */
 	@Override
 	public void setAdapter(ListAdapter adapter) {
 		listview.setAdapter(adapter);
+		innerInit(getContext());
 	}
 
 	public static class Mode {

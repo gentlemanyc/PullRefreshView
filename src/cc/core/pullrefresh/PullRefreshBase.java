@@ -10,12 +10,11 @@ import android.widget.ListAdapter;
 
 /**
  * ClassName:PullRefreshBase <br/>
- * Date: 2015Äê6ÔÂ22ÈÕ ÏÂÎç3:37:57 <br/>
+ * Date: 2015å¹´6æœˆ22æ—¥ ä¸‹åˆ3:37:57 <br/>
  * 
  * @author YuanChao
  */
-public abstract class PullRefreshBase<T extends View> extends LinearLayout
-		implements IPullBase<T> {
+public abstract class PullRefreshBase<T extends View> extends LinearLayout implements IPullBase<T> {
 
 	public PullRefreshBase(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -52,9 +51,13 @@ public abstract class PullRefreshBase<T extends View> extends LinearLayout
 	}
 
 	public int[] getLc(View view) {
-		int[] lc = new int[2];
-		view.getLocationInWindow(lc);
+		int[] lc = new int[] { 0, 0 };
+		if (view != null)
+			view.getLocationInWindow(lc);
 		return lc;
 	}
 
+	@Override
+	public void showHeaderRefresh() {
+	}
 }

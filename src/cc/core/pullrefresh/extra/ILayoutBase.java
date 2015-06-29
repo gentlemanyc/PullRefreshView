@@ -4,10 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 /**
- * ClassName:ILayoutBase <br/>
- * Date: 2015Äê6ÔÂ22ÈÕ ÏÂÎç11:47:25 <br/>
- * 
- * @author YuanChao
+ * cc.core.pullrefresh.extra.ILayoutBase
+ * @author YuanChao <br/>
+ * create at 2015å¹´6æœˆ22æ—¥ ä¸‹åˆ1:44:13
  */
 public interface ILayoutBase {
 	public void initView(Context context,AttributeSet attr);

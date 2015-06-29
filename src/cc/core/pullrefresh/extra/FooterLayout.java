@@ -7,10 +7,9 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
 /**
- * ClassName:FooterLayout <br/>
- * Date: 2015Äê6ÔÂ22ÈÕ ÏÂÎç11:45:47 <br/>
- * 
- * @author YuanChao
+ * cc.core.pullrefresh.extra.FooterLayout
+ * @author YuanChao <br/>
+ * create at 2015å¹´6æœˆ22æ—¥ ä¸‹åˆ1:43:59
  */
 public class FooterLayout extends LinearLayout implements ILayoutBase {
 	private static final String TAG = "FooterLayout";

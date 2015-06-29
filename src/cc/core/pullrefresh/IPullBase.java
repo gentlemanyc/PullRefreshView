@@ -7,11 +7,10 @@ import android.view.View;
 import android.widget.ListAdapter;
 
 /**
- * ClassName:IPullBase <br/>
- * Date: 2015Äê6ÔÂ21ÈÕ ÏÂÎç11:12:20 <br/>
- * Ë¢ĞÂ¶¨Òå½Ó¿Ú
- * 
- * @author YuanChao
+ * cc.core.pullrefresh.IPullBase
+ * @author YuanChao <br/>
+ * @param <T>
+ * create at 2015å¹´6æœˆ21æ—¥ ä¸‹åˆ1:34:37
  */
 public interface IPullBase<T extends View> {
 
@@ -32,4 +31,6 @@ public interface IPullBase<T extends View> {
 	public void initFooter(Context context, AttributeSet attr);
 
 	public void setOnRefreshListener(OnRefreshListener listener);
+	
+	public void showHeaderRefresh();
 }

@@ -4,5 +4,8 @@
     <string name="app_name">PullRefreshView</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="text_pullrefresh">下拉刷新</string>
+    <string name="text_release_refresh">释放刷新</string>
+    <string name="text_refreshing">正在刷新</string>
 
 </resources>

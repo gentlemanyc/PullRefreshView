@@ -19,10 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * ClassName:HeaderLayout <br/>
- * Date: 2015ƒÍ6‘¬22»’ œ¬ŒÁ11:45:00 <br/>
+ * cc.core.pullrefresh.extra.HeaderLayout
  * 
- * @author YuanChao
+ * @author YuanChao <br/>
+ *         create at 2015Âπ¥6Êúà22Êó• ‰∏ãÂçà1:43:43
  */
 public class HeaderLayout extends LinearLayout implements ILayoutBase {
 	private static final String TAG = "HeaderLayout";
@@ -58,24 +58,18 @@ public class HeaderLayout extends LinearLayout implements ILayoutBase {
 
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		if (attrs != null) {
-			TypedArray ta = getContext().obtainStyledAttributes(attrs,
-					R.styleable.PullRefresh);
-			textColor = ta.getColor(R.styleable.PullRefresh_header_textColor,
-					Color.BLACK);
-			textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
-					textSize, dm);
-			textSize = ta.getDimensionPixelSize(
-					R.styleable.PullRefresh_header_textSize, (int) textSize);// ƒ¨»œ◊÷ÃÂ¥Û–°14sp
-			imgSrc = ta.getResourceId(R.styleable.PullRefresh_header_img,
-					R.drawable.ic_launcher);
+			TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.PullRefresh);
+			textColor = ta.getColor(R.styleable.PullRefresh_header_textColor, Color.BLACK);
+			textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, dm);
+			textSize = ta.getDimensionPixelSize(R.styleable.PullRefresh_header_textSize, (int) textSize);// ƒ¨ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ–°14sp
+			imgSrc = ta.getResourceId(R.styleable.PullRefresh_header_img, R.drawable.ic_launcher);
 			ta.recycle();
 			refreshTitle.setTextColor(textColor);
 			refreshTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 			headerImg.setImageResource(imgSrc);
 		}
 
-		rotation = ObjectAnimator.ofFloat(headerImg, "rotation", 90f,
-				360f + 90f).setDuration(2000);
+		rotation = ObjectAnimator.ofFloat(headerImg, "rotation", 90f, 360f + 90f).setDuration(2000);
 		rotation.setRepeatCount(Integer.MAX_VALUE);
 		rotation.setInterpolator(new LinearInterpolator());
 	}
@@ -85,18 +79,18 @@ public class HeaderLayout extends LinearLayout implements ILayoutBase {
 	}
 
 	public void setRefreshing() {
-		refreshTitle.setText("’˝‘⁄À¢–¬");
+		refreshTitle.setText(getResources().getString(R.string.text_refreshing));
 		rotation.start();
 	}
 
 	public void setPullToRefresh() {
 		rotation.cancel();
-		refreshTitle.setText("œ¬¿≠À¢–¬");
+		refreshTitle.setText(getResources().getString(R.string.text_pullrefresh));
 	}
 
 	public void setReleaseToRefresh() {
 		rotation.cancel();
-		refreshTitle.setText(" Õ∑≈À¢–¬");
+		refreshTitle.setText(getResources().getString(R.string.text_release_refresh));
 	}
 
 	@Override

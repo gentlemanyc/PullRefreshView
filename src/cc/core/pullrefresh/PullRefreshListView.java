@@ -29,7 +29,7 @@ import com.nineoldandroids.view.ViewHelper;
  * @author YuanChao <br/>
  *         create at 2015年6月22日 下午3:16:01
  */
-public class PullRefreshListViewDemo  extends LinearLayout implements
+public class PullRefreshListView  extends LinearLayout implements
 		AbsListView.OnScrollListener {
 
 	private InternalListView listview;
@@ -54,7 +54,7 @@ public class PullRefreshListViewDemo  extends LinearLayout implements
 		return listview;
 	}
 
-	public PullRefreshListViewDemo(Context context, AttributeSet attrs,
+	public PullRefreshListView(Context context, AttributeSet attrs,
 			int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		layoutBase = new LinearLayout(context, attrs, defStyleAttr);
@@ -62,14 +62,14 @@ public class PullRefreshListViewDemo  extends LinearLayout implements
 		initView(context);
 	}
 
-	public PullRefreshListViewDemo(Context context, AttributeSet attrs) {
+	public PullRefreshListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		listview = new InternalListView(context, attrs);
 		layoutBase = new LinearLayout(context, attrs);
 		initView(context);
 	}
 
-	public PullRefreshListViewDemo(Context context) {
+	public PullRefreshListView(Context context) {
 		super(context);
 		layoutBase = new LinearLayout(context);
 		listview = new InternalListView(context);

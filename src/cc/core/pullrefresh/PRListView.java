@@ -3,13 +3,12 @@ package cc.core.pullrefresh;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ListView;
 
 /**
  * ClassName:PRListView <br/>
- * Date: 2015Äê6ÔÂ22ÈÕ ÏÂÎç4:06:52 <br/>
- * ÏÂÀ­Ë¢ĞÂListView£¬ListViewµÄÊµÏÖ{@link InnerListView}
+ * Date: 2015å¹´6æœˆ22æ—¥ ä¸‹åˆ4:06:52 <br/>
+ * ä¸‹æ‹‰åˆ·æ–°ListViewï¼ŒListViewçš„å®ç°{@link InnerListView}
  * 
  * @author YuanChao
  */
@@ -47,10 +46,10 @@ public class PRListView extends PullRefreshAbsListViewBase<ListView> {
 	}
 
 	/**
-	 * ÄÚ²¿ListViewµÄÊµÏÖ,¼Ì³ĞListView</br> cc.core.pullrefresh.InnerListView
+	 * å†…éƒ¨ListViewçš„å®ç°,ç»§æ‰¿ListView</br> cc.core.pullrefresh.InnerListView
 	 * 
 	 * @author YuanChao <br/>
-	 *         create at 2015Äê6ÔÂ22ÈÕ ÏÂÎç10:55:53
+	 * create at 2015å¹´6æœˆ22æ—¥ ä¸‹åˆ10:55:53
 	 */
 	class InnerListView extends ListView {
 
@@ -66,7 +65,7 @@ public class PRListView extends PullRefreshAbsListViewBase<ListView> {
 		public InnerListView(Context context) {
 			super(context);
 		}
-
+		
 		@Override
 		public boolean onTouchEvent(MotionEvent ev) {
 			if (childTouchEvnet(ev))

@@ -3,10 +3,9 @@ package cc.core.pullrefresh;
 import android.view.View;
 
 /**
- * ClassName:OnRefreshListener <br/>
- * Date: 2015Äê6ÔÂ22ÈÕ ÏÂÎç3:11:47 <br/>
- * 
- * @author YuanChao
+ * cc.core.pullrefresh.OnRefreshListener
+ * @author YuanChao <br/>
+ *  create at 2015å¹´6æœˆ22æ—¥ ä¸‹åˆ1:37:55
  */
 public abstract class OnRefreshListener {
 	public abstract void onHeaderRefresh();
